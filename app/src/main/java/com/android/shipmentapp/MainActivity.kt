@@ -1,8 +1,15 @@
 package com.android.shipmentapp
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.animation.Animation
+import android.view.animation.AnticipateInterpolator
+import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -27,18 +34,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        bottomBar = binding.mainBottomNav
         val navHost = supportFragmentManager.findFragmentById(R.id.main_navHost_container)
                 as NavHostFragment
         val navController = navHost.findNavController()
         navGraph = navController.navInflater.inflate(R.navigation.main_nav_graph)
         navGraph.setStartDestination(R.id.homeFragment)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination) {
+                navGraph.findNode(R.id.homeFragment) -> {
+                    bottomBar.selectTabAt(0)
+//                    bottomBar.isVisible = true
+                    barVisibleAnim()
+                }
+                else -> {
+                    barInvisibleAnim()
+//                    bottomBar.isVisible = false
+                }
+            }
+        }
         navController.graph = navGraph
 
-        bottomBar = binding.mainBottomNav
-        if(navGraph.id == R.id.homeFragment){
-            bottomBar.selectTabAt(0)
-        }
 
 //        navController.addOnDestinationChangedListener { _, destination, _ ->
 //            when(destination.id) {
@@ -47,6 +63,7 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
 //        bottomBar.setupWithNavController(navController)
+
         bottomBar.setOnTabSelectListener(object :AnimatedBottomBar.OnTabSelectListener{
             override fun onTabSelected(
                 lastIndex: Int,
@@ -62,11 +79,22 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-//        binding.mainBottomNav.setupWithNavController(navController)
-//        setupWithNavController(this, navController)
-//            .setupWithNavController(R.menu.bottom_menu, navController)
+
+    }
 
 
+    private fun barVisibleAnim(){
+        return ObjectAnimator.ofFloat(bottomBar, "translationY", 300.0f, 0.0f).apply {
+            duration = 1000
+            interpolator = AnticipateInterpolator()
+        }.start()
+    }
+
+    private fun barInvisibleAnim(){
+        return ObjectAnimator.ofFloat(bottomBar, "translationY", 0.0f, 300.0f).apply {
+            duration = 1000
+            interpolator = AnticipateInterpolator()
+        }.start()
     }
 
     override fun onResume() {
