@@ -33,7 +33,7 @@ class AvailableVehicleAdapter(): RecyclerView.Adapter<AvailableVehicleAdapter.Av
     }
 
     override fun getItemCount(): Int {
-        return 100
+        return 10
     }
 
     var differList = object : DiffUtil.ItemCallback<ShipmentModel>(){

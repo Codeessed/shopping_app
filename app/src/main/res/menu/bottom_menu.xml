@@ -4,17 +4,17 @@
     <item
         android:id="@+id/homeFragment"
         android:title="Home"
-        android:icon="@drawable/ic_account"
+        android:icon="@drawable/ic_home"
         />
     <item
         android:id="@+id/savingsFragment"
         android:title="Calculate"
-        android:icon="@drawable/ic_account"
+        android:icon="@drawable/ic_calculate"
         />
     <item
         android:id="@+id/discountFragment"
         android:title="Shipment"
-        android:icon="@drawable/ic_account"
+        android:icon="@drawable/ic_time"
         />
     <item
         android:id="@+id/accountFragment"
