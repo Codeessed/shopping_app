@@ -39,10 +39,6 @@ class ShipmentFragment: Fragment() {
         shipmentRecycler.layoutManager = LinearLayoutManager(requireContext())
         val alphaAnim = ObjectAnimator.ofFloat(binding.shipmentBody, "translationY", 300.0f, 0.0f).apply {
             duration = 2000
-//            repeatCount = 3
-//            startDelay = 2000
-//            repeatMode = ObjectAnimator.REVERSE
-            interpolator = AnticipateInterpolator()
         }
 
         alphaAnim.start()

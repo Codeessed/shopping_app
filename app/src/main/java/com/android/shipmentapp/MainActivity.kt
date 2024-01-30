@@ -1,11 +1,15 @@
 package com.android.shipmentapp
 
 import android.animation.Animator
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.AnticipateInterpolator
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
@@ -17,10 +21,19 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.android.ALPHA
+import com.android.SCALE_X
+import com.android.SCALE_Y
+import com.android.TRANSLATION_X
+import com.android.TRANSLATION_Y
+import com.android.TWO_SECONDS
+import com.android.createAnim
 import com.android.shipmentapp.databinding.ActivityMainBinding
+import com.android.startAnimSet
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.textfield.TextInputEditText
 import nl.joery.animatedbottombar.AnimatedBottomBar
 
 class MainActivity : AppCompatActivity() {
@@ -29,27 +42,84 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tab: TabLayout
     private lateinit var navGraph: NavGraph
     private lateinit var bottomBar: AnimatedBottomBar
+    private lateinit var topbar: RelativeLayout
+    private lateinit var homeTopbar: LinearLayout
+    private lateinit var searchBar: TextInputEditText
+    private lateinit var backBtn: ImageView
+    private lateinit var homeTopDetails: LinearLayout
+    private lateinit var searchBody: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         bottomBar = binding.mainBottomNav
+        topbar = binding.topBar
+        homeTopbar = binding.homeTopBar
+        searchBar = binding.searchView
+        backBtn = binding.backBtn
+        searchBody = binding.homeSearchBody
+        homeTopDetails = binding.homeTopDetails
         val navHost = supportFragmentManager.findFragmentById(R.id.main_navHost_container)
                 as NavHostFragment
         val navController = navHost.findNavController()
         navGraph = navController.navInflater.inflate(R.navigation.main_nav_graph)
         navGraph.setStartDestination(R.id.homeFragment)
+//        val showBottomBarAnim = ObjectAnimator.ofFloat(bottomBar, "translationY", 300.0f, 0.0f).apply {
+//            duration = 1000
+//            interpolator = AnticipateInterpolator()
+//        }
+//        val hideBottomBarAnim = ObjectAnimator.ofFloat(bottomBar, "translationY", 0.0f, 300.0f).apply {
+//            duration = 1000
+//            interpolator = AnticipateInterpolator()
+//        }
+//        val showTopBarAnim = ObjectAnimator.ofFloat(topbar, "translationY", -300.0f, 0.0f).apply {
+//            duration = 1000
+//            interpolator = AnticipateInterpolator()
+//        }
+
+
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination) {
-                navGraph.findNode(R.id.homeFragment) -> {
+            topbar.isVisible = true
+            when (destination.id) {
+                R.id.homeFragment -> {
                     bottomBar.selectTabAt(0)
-//                    bottomBar.isVisible = true
-                    barVisibleAnim()
+                    bottomBar.isEnabled = true
+                    startAnimSet(
+                        homeTopDetails.createAnim(TRANSLATION_Y, -100.0f, 0.0f, 1000L),
+                        searchBody.createAnim(TRANSLATION_Y, 0.0f, 1.0f, 1000L),
+                        searchBar.createAnim(SCALE_X, 1.0f, 2f, 1000L),
+                        backBtn.createAnim(TRANSLATION_X, 0.0f, -300.0f, 1000L),
+                        bottomBar.createAnim(TRANSLATION_Y, 300f, 0.0f, 1000L),
+                        topbar.createAnim(TRANSLATION_Y, -300.0f, 0.0f, 1000L)
+                    )
                 }
                 else -> {
-                    barInvisibleAnim()
-//                    bottomBar.isVisible = false
+                      bottomBar.isEnabled = false
+                    when(destination.id){
+                        R.id.shipmentFragment -> {
+                            startAnimSet(
+                                searchBar.createAnim(SCALE_X, 1.0f, 2f, 1000L),
+                                backBtn.createAnim(TRANSLATION_X, -100.0f, 0.0f, 1000L),
+                                bottomBar.createAnim(TRANSLATION_Y, 0.0f, 300.0f, 1000L),
+                                homeTopDetails.createAnim(TRANSLATION_Y, 0.0f, -100.0f, 1000L),
+                                searchBar.createAnim(SCALE_X, 1.5f, 1.0f, 1000L),
+                                topbar.createAnim(TRANSLATION_Y, 0.0f, -100.0f, 1000L)
+                            )
+                        }
+                        R.id.calculateFragment -> {
+                            topbar.isVisible = false
+                            startAnimSet(
+                                searchBar.createAnim(SCALE_X, 1.0f, 2f, 1000L),
+                                backBtn.createAnim(TRANSLATION_X, -100.0f, 0.0f, 1000L),
+                                bottomBar.createAnim(TRANSLATION_Y, 0.0f, 300.0f, 1000L),
+                                homeTopDetails.createAnim(TRANSLATION_Y, 0.0f, -100.0f, 1000L),
+                                searchBar.createAnim(SCALE_X, 1.5f, 1.0f, 1000L),
+                                topbar.createAnim(TRANSLATION_Y, 0.0f, -100.0f, 1000L)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -82,6 +152,12 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun toSearchAnim(){
+        return ObjectAnimator.ofFloat(bottomBar, "translationY", 300.0f, 0.0f).apply {
+            duration = 1000
+            interpolator = AnticipateInterpolator()
+        }.start()
+    }
 
     private fun barVisibleAnim(){
         return ObjectAnimator.ofFloat(bottomBar, "translationY", 300.0f, 0.0f).apply {
@@ -97,7 +173,12 @@ class MainActivity : AppCompatActivity() {
         }.start()
     }
 
+    private fun clearTopBars(){
+        topbar.isVisible = false
+    }
+
     override fun onResume() {
         super.onResume()
+
     }
 }
