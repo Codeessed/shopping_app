@@ -7,13 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnticipateInterpolator
-import android.view.animation.AnticipateOvershootInterpolator
-import android.view.animation.BounceInterpolator
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.TRANSLATION_X
+import com.android.TRANSLATION_Y
 import com.android.adapter.AvailableVehicleAdapter
-import com.android.adapter.ShipmentAdapter
+import com.android.createAnim
 import com.android.shipmentapp.databinding.HomeFragmentBinding
+import com.android.startAnimSet
 
 class HomeFragment: Fragment() {
 
@@ -44,25 +45,11 @@ class HomeFragment: Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val alphaAnim = ObjectAnimator.ofFloat(binding.homeMainBody, "translationY", 100.0f, 0.0f).apply {
-            duration = 1000
-            interpolator = AnticipateInterpolator()
-        }
-
-        val alphaAnim2 = ObjectAnimator.
-            ofFloat(binding.availableVehicleRecycler, "translationX", 100.0f, 0.0f).apply {
-            duration = 1000
-            interpolator = AnticipateInterpolator()
-        }
-        startAnimSet(alphaAnim, alphaAnim2)
-
+        startAnimSet(
+            binding.homeMainBody.createAnim(TRANSLATION_Y, 100.0f, 0.0f, 1000L),
+            binding.availableVehicleRecycler.createAnim(TRANSLATION_X, 100.0f, 0.0f, 1000L)
+        )
         setUpVehicleRecycler()
-    }
-
-    private fun startAnimSet(vararg animations: ObjectAnimator) {
-        val animationSet = AnimatorSet()
-        animationSet.playTogether(animations.asList())
-        animationSet.start()
     }
 
 }

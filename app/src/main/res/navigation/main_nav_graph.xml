@@ -25,10 +25,18 @@
     <fragment
         android:id="@+id/calculateFragment"
         android:name="com.android.shipmentapp.CalculateFragment"
-        android:label="CalculateFragment" />
+        android:label="CalculateFragment" >
+        <action
+            android:id="@+id/action_calculateFragment_to_checkoutFragment"
+            app:destination="@id/checkoutFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.android.shipmentapp.ProfileFragment"
         android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/checkoutFragment"
+        android:name="com.android.shipmentapp.CheckoutFragment"
+        android:label="CheckoutFragment" />
 
 </navigation>
