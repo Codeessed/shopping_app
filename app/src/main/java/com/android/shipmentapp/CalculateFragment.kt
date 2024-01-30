@@ -41,6 +41,10 @@ class CalculateFragment: Fragment() {
             findNavController().navigate(R.id.action_calculateFragment_to_checkoutFragment)
         }
 
+        binding.calculateBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         startAnimSet(
             binding.calculateTitle.createAnim(TRANSLATION_Y, 100.0f, 10.0f, 1000L),
             binding.calculateBack.createAnim(TRANSLATION_X, -100.0f, 0.0f, 1000L),

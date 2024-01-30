@@ -32,7 +32,7 @@ class ShipmentAdapter(): RecyclerView.Adapter<ShipmentAdapter.ShipmentViewHolder
     }
 
     override fun getItemCount(): Int {
-        return 100
+        return 20
     }
 
     var differList = object : DiffUtil.ItemCallback<ShipmentModel>(){
